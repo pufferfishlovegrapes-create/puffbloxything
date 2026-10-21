@@ -76,8 +76,24 @@ app.use((error, req, res, _next) => {
 const { server: wisp, logging: wispLogging } = require('@mercuryworkshop/wisp-js/server');
 wispLogging.set_level(wispLogging.NONE);
 configureWisp(wisp.options, config.upstreamHost);
+function isSameOriginUpgrade(req) {
+  const origin = req.headers.origin;
+  if (!origin) return false;
+  if (config.publicBaseUrl && origin === config.publicBaseUrl) return true;
+  try {
+    const originHost = new URL(origin).host.toLowerCase();
+    const requestHosts = [req.headers['x-forwarded-host'], req.headers.host]
+      .filter(Boolean)
+      .flatMap((value) => String(value).split(','))
+      .map((value) => value.trim().toLowerCase());
+    return requestHosts.includes(originHost);
+  } catch {
+    return false;
+  }
+}
+
 server.on('upgrade', (req, socket, head) => {
-  if (req.url === '/wisp/' && req.headers.origin === config.publicBaseUrl) {
+  if (req.url === '/wisp/' && isSameOriginUpgrade(req)) {
     try { wisp.routeRequest(req, socket, head); }
     catch (error) { logger.warn({ event: 'wisp_upgrade_rejected', error: error.message }); socket.destroy(); }
     return;
