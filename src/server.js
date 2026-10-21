@@ -74,7 +74,7 @@ app.use((error, req, res, _next) => {
 // Wisp provides Scramjet's transport. Its hostname whitelist is exact and its
 // built-in destination-IP checks block private, loopback, link-local and reserved IPs.
 const { server: wisp, logging: wispLogging } = require('@mercuryworkshop/wisp-js/server');
-wispLogging.set_level(wispLogging.NONE);
+wispLogging.set_level(wispLogging.DEBUG);
 configureWisp(wisp.options, config.allowedHostnames, { allowAnyHost: config.wispAllowAnyHost });
 function isSameOriginUpgrade(req) {
   const origin = req.headers.origin;
