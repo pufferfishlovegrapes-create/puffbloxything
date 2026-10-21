@@ -22,3 +22,15 @@ test('Wisp policy permits only the exact upstream hostname and standard web port
 test('hostname regular expression is escaped before exact matching', () => {
   assert.equal(escapeRegex('a.b[0]'), 'a\\.b\\[0\\]');
 });
+
+test('Wisp policy supports wildcard subdomains and allow-any mode', () => {
+  const { configureWisp } = require('../src/scramjet-config');
+  const { approvedWispDestination } = require('../src/wisp-policy');
+  const options = configureWisp({}, ['www.easyfun.gg', '*.easyfun.gg']);
+  assert.equal(approvedWispDestination('cdn.easyfun.gg', 443, options), true);
+  assert.equal(approvedWispDestination('easyfun.gg.evil.test', 443, options), false);
+  assert.equal(approvedWispDestination('evil-easyfun.gg', 443, options), false);
+  const open = configureWisp({}, ['www.easyfun.gg'], { allowAnyHost: true });
+  assert.equal(open.hostname_whitelist, null);
+  assert.equal(open.allow_private_ips, false);
+});

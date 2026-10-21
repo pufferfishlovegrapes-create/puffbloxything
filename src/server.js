@@ -75,7 +75,7 @@ app.use((error, req, res, _next) => {
 // built-in destination-IP checks block private, loopback, link-local and reserved IPs.
 const { server: wisp, logging: wispLogging } = require('@mercuryworkshop/wisp-js/server');
 wispLogging.set_level(wispLogging.NONE);
-configureWisp(wisp.options, config.upstreamHost);
+configureWisp(wisp.options, config.allowedHostnames, { allowAnyHost: config.wispAllowAnyHost });
 function isSameOriginUpgrade(req) {
   const origin = req.headers.origin;
   if (!origin) return false;
@@ -103,7 +103,7 @@ server.on('upgrade', (req, socket, head) => {
 
 // Wisp is the only Scramjet transport; the legacy gated socket module stays disabled.
 
-server.listen(config.port, '0.0.0.0', () => logger.info({ event: 'server_listening', port: config.port, upstream: config.upstreamOrigin, engine: 'scramjet', wisp: true }));
+server.listen(config.port, '0.0.0.0', () => logger.info({ event: 'server_listening', port: config.port, upstream: config.upstreamOrigin, engine: 'scramjet', wisp: true, wispHosts: config.wispAllowAnyHost ? 'any-public' : config.allowedHostnames }));
 
 let shuttingDown = false;
 function shutdown(signal) {

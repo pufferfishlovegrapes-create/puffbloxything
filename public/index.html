@@ -5,19 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="referrer" content="no-referrer">
   <meta name="theme-color" content="#000000">
+  <meta name="description" content="PuffProxy - play EasyFun cloud games fullscreen.">
   <title>PuffProxy</title>
   <style>
-    :root, html, body { width:100%;height:100%;min-height:100%;margin:0;background:#000;overflow:hidden; }
-    body { position:fixed;inset:0; }
-    #game { position:absolute;inset:0;width:100%;height:100%;height:100dvh;border:0;background:#000;display:block; }
-    #status { position:fixed;z-index:10;left:50%;top:50%;transform:translate(-50%,-50%);font:14px system-ui,sans-serif;color:#d8d8d8;background:#151515;padding:12px 16px;border:1px solid #333;border-radius:10px; }
-    #status[hidden] { display:none; }
+    html, body { width:100%; height:100%; margin:0; background:#000; overflow:hidden; color-scheme:dark; }
+    body { position:fixed; inset:0; font:14px system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color:#e5e5e5; }
+    #game { position:absolute; inset:0; width:100%; height:100%; height:100dvh; border:0; background:#000; display:block; }
+    #loader { position:fixed; inset:0; z-index:10; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; background:#000; text-align:center; padding:24px; transition:opacity .3s; }
+    #loader[hidden] { display:none; }
+    #loader.fade { opacity:0; pointer-events:none; }
+    .spinner { width:36px; height:36px; border-radius:50%; border:3px solid #262626; border-top-color:#e5e5e5; animation:spin .8s linear infinite; }
+    #loader.error .spinner { display:none; }
+    #status { max-width:420px; line-height:1.5; margin:0; }
+    #retry { display:none; }
+    #loader.error #retry { display:inline-block; }
+    button { font:inherit; color:#000; background:#e5e5e5; border:0; border-radius:8px; padding:8px 16px; cursor:pointer; }
+    button:focus-visible { outline:2px solid #fff; outline-offset:2px; }
+    #fullscreen { position:fixed; z-index:20; top:max(8px, env(safe-area-inset-top)); right:max(8px, env(safe-area-inset-right)); padding:6px 10px; font-size:12px; color:#e5e5e5; background:rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.2); opacity:.35; transition:opacity .2s; }
+    #fullscreen:hover, #fullscreen:focus-visible { opacity:1; }
+    #fullscreen[hidden] { display:none; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .spinner { animation-duration:2s; } }
   </style>
   <script src="/scram/scramjet.all.js"></script>
   <script src="/baremux/index.js"></script>
 </head>
 <body>
-  <div id="status" role="status">Starting PuffProxy…</div>
+  <div id="loader">
+    <div class="spinner" aria-hidden="true"></div>
+    <p id="status" role="status" aria-live="polite">Starting PuffProxy…</p>
+    <button id="retry" type="button">Try again</button>
+  </div>
+  <button id="fullscreen" type="button" hidden aria-label="Enter fullscreen">Fullscreen</button>
   <script id="proxy-target" type="application/json">{"url":"https://www.easyfun.gg/cloud-games/roblox.html"}</script>
   <script src="/scramjet-db.js"></script>
   <script src="/scramjet-client.js"></script>

@@ -40,6 +40,7 @@ function loadConfig(env = process.env) {
     port, upstreamOrigin: origin, upstreamHost: upstream.hostname.toLowerCase(),
     upstreamPath: upstreamUrl.pathname + upstreamUrl.search, upstreamProtocol: upstream.protocol,
     allowedHostnames, publicBaseUrl,
+    wispAllowAnyHost: String(env.WISP_ALLOW_ANY_HOST || '').toLowerCase() === 'true',
     enableWebSockets: String(env.ENABLE_WEBSOCKETS || '').toLowerCase() === 'true', websocketPaths,
     requestTimeoutMs: 30_000, responseTimeoutMs: 90_000, maxBodyBytes: 10 * 1024 * 1024,
     maxRedirects: 5, maxHeaderBytes: 16 * 1024,
