@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#000000">
+  <title>PuffProxy</title>
+  <style>
+    :root, html, body { width:100%;height:100%;min-height:100%;margin:0;background:#000;overflow:hidden; }
+    body { position:fixed;inset:0; }
+    #game { position:absolute;inset:0;width:100%;height:100%;height:100dvh;border:0;background:#000;display:block; }
+    #status { position:fixed;z-index:10;left:50%;top:50%;transform:translate(-50%,-50%);font:14px system-ui,sans-serif;color:#d8d8d8;background:#151515;padding:12px 16px;border:1px solid #333;border-radius:10px; }
+    #status[hidden] { display:none; }
+  </style>
+  <script src="/scram/scramjet.all.js"></script>
+  <script src="/baremux/index.js"></script>
+</head>
+<body>
+  <div id="status" role="status">Starting PuffProxy…</div>
+  <script id="proxy-target" type="application/json">{"url":"https://www.easyfun.gg/cloud-games/roblox.html"}</script>
+  <script src="/scramjet-client.js"></script>
+</body>
+</html>
