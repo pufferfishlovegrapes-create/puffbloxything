@@ -4,7 +4,17 @@
   const status = document.getElementById('status');
   try {
     if (!('serviceWorker' in navigator)) throw new Error('This browser does not support service workers.');
-    await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+    await window.ensureScramjetDB({
+      beforeRepair: async () => {
+        status.textContent = 'Repairing PuffProxy storage…';
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((registration) => registration.unregister()));
+      },
+      onBlocked: () => {
+        status.textContent = 'Repairing PuffProxy storage… close other PuffProxy tabs if this persists.';
+      },
+    });
+    await navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' });
     await navigator.serviceWorker.ready;
     await new Promise((resolve) => {
       if (navigator.serviceWorker.controller) return resolve();

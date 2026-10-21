@@ -41,7 +41,12 @@ app.use((req, res, next) => {
 });
 app.use('/proxy', rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: 'draft-7', legacyHeaders: false, message: { error: 'Rate limit exceeded' } }));
 app.use(express.raw({ type: '*/*', limit: config.maxBodyBytes }));
-app.use('/scramjet-client.js', express.static(path.join(__dirname, '..', 'public', 'scramjet-client.js'), { immutable: true, maxAge: '1d' }));
+for (const file of ['scramjet-client.js', 'scramjet-db.js']) {
+  app.get(`/${file}`, (_req, res) => {
+    res.setHeader('Cache-Control', 'no-cache');
+    res.sendFile(path.join(__dirname, '..', 'public', file));
+  });
+}
 
 // Scramjet worker and transport assets are first-party self-hosted static files.
 app.get('/sw.js', (_req, res) => {
